@@ -5,6 +5,5 @@ export default [
     index("routes/home.tsx"),
     route("dashboard", "routes/dashboard.tsx"),
     route("details", "routes/details.tsx"),
-    route("tracking", "routes/tracking.tsx"),
   ]),
 ] satisfies RouteConfig;

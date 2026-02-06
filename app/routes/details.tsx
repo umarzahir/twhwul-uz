@@ -4,7 +4,7 @@ import type { Route } from "./+types/details";
 import { detailsData } from "~/mocks/details";
 import { Badge } from "~/ui/primitives/Badge";
 import { Card, CardBody, CardHeader } from "~/ui/primitives/Card";
-import { ProgressBar } from "~/ui/primitives/ProgressBar";
+import CircularProgress from "~/ui/primitives/CircularProgress";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -38,6 +38,12 @@ function initials(name: string) {
 
 export default function DetailsRoute() {
   const data = detailsData;
+  const detailsCardData = [
+            { icon: "/hugeicons_file-security.svg", value: data.evidenceSummary.total, label: "Total Evidence" },
+            { icon: "/hugeicons_file-security.svg", value: data.evidenceSummary.inProgress, label: "In Progress" },
+            { icon: "/hugeicons_file-security.svg", value: data.evidenceSummary.underReview, label: "Under Review" },
+            { icon: "/hugeicons_file-security.svg", value: data.evidenceSummary.completed, label: "Completed" },
+          ]
   const [searchParams, setSearchParams] = useSearchParams();
   const tab = searchParams.get("tab") === "evidence" ? "evidence" : "overview";
 
@@ -51,247 +57,164 @@ export default function DetailsRoute() {
     [searchParams, setSearchParams],
   );
 
+  const overviewSections = [
+    {
+      id: "objective",
+      title: "Objective",
+      content: (
+        <p className="mt-2 text-sm text-slate-700">{data.overview.objective}</p>
+      ),
+    },
+    {
+      id: "requirements",
+      title: "Implementation Requirements",
+      content: (
+        <ul className="mt-2 space-y-2 text-sm text-slate-700">
+          {data.overview.requirements.map((r) => (
+            <li key={r} className="flex gap-2">
+              <span className="mt-1 size-1.5 shrink-0 rounded-full bg-slate-900" />
+              <span>{r}</span>
+            </li>
+          ))}
+        </ul>
+      ),
+    },
+    {
+      id: "evidence-docs",
+      title: "Evidence Documents",
+      content: (
+        <div className="mt-2 text-sm text-slate-700">Refer to the Evidence tab for full document list and details.</div>
+      ),
+    },
+    {
+      id: "references",
+      title: "Related Regulations",
+      content: (
+        <ul className="mt-2 space-y-2 text-sm text-slate-700">
+          {data.overview.references.map((r) => (
+            <li key={r} className="flex gap-2">
+              <span className="mt-1 size-1.5 shrink-0 rounded-full bg-rose-500" />
+              <span>{r}</span>
+            </li>
+          ))}
+        </ul>
+      ),
+    },
+    {
+      id: "scope",
+      title: "Scope",
+      content: (
+        <ul className="mt-2 space-y-2 text-sm text-slate-700">
+          {data.overview.scope.map((s) => (
+            <li key={s} className="flex gap-2">
+              <span className="mt-1 size-1.5 shrink-0 rounded-full bg-emerald-600" />
+              <span>{s}</span>
+            </li>
+          ))}
+        </ul>
+      ),
+    },
+  ] as const;
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <Card>
+      <div className=" px-4 py-2 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
+          <div className="flex px-2 py-1 max-w-34 rounded-full bg-slate-100 flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
             <span>{data.category}</span>
-            <span aria-hidden="true">•</span>
-            <span>Control area</span>
           </div>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
+          <h1 className="mt-1 text-1xl font-semibold tracking-tight text-slate-900">
             {data.title}
           </h1>
-          <p className="mt-1 max-w-3xl text-sm text-slate-600">
+          <p className="mt-1 max-w-4xl text-sm text-slate-500">
             {data.description}
           </p>
         </div>
 
         <div className="w-full max-w-xl">
-          <div className="flex items-center justify-between text-xs text-slate-600">
-            <span className="font-medium">Progress</span>
-            <span className="tabular-nums font-semibold">{data.progress}%</span>
-          </div>
-          <div className="mt-2">
-            <ProgressBar value={data.progress} />
+          <div className="flex items-center justify-end">
+            <CircularProgress value={data.progress} size={85} strokeWidth={8} className="mr-2" />
           </div>
         </div>
+
+      </div>
+        </Card>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {
+          detailsCardData.map((s) => (
+            <Card key={s.label}>
+              <CardBody>
+                <div className="flex items-center gap-3">
+                  <div className="grid size-10 place-items-center rounded-full text-white">
+                    <img src={s.icon} alt={s.label} className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="mt-1 text-2xl font-semibold tabular-nums text-slate-900">{s.value}</div>
+                    <div className="text-xs font-medium text-slate-500">{s.label}</div>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          ))
+        }
       </div>
 
-      {/* Evidence summary */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
-        <Card>
-          <CardBody>
-            <div className="text-xs font-semibold text-slate-500">Total</div>
-            <div className="mt-1 text-2xl font-semibold tabular-nums text-slate-900">
-              {data.evidenceSummary.total}
-            </div>
-            <div className="mt-2 text-xs text-slate-500">Evidence items</div>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <div className="text-xs font-semibold text-slate-500">In progress</div>
-            <div className="mt-1 text-2xl font-semibold tabular-nums text-slate-900">
-              {data.evidenceSummary.inProgress}
-            </div>
-            <Badge tone="amber" className="mt-2">
-              Active work
-            </Badge>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <div className="text-xs font-semibold text-slate-500">Under review</div>
-            <div className="mt-1 text-2xl font-semibold tabular-nums text-slate-900">
-              {data.evidenceSummary.underReview}
-            </div>
-            <Badge tone="purple" className="mt-2">
-              Pending approval
-            </Badge>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <div className="text-xs font-semibold text-slate-500">Completed</div>
-            <div className="mt-1 text-2xl font-semibold tabular-nums text-slate-900">
-              {data.evidenceSummary.completed}
-            </div>
-            <Badge tone="green" className="mt-2">
-              Accepted
-            </Badge>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <div className="text-xs font-semibold text-slate-500">Not started</div>
-            <div className="mt-1 text-2xl font-semibold tabular-nums text-slate-900">
-              {data.evidenceSummary.notStarted}
-            </div>
-            <Badge tone="slate" className="mt-2">
-              Backlog
-            </Badge>
-          </CardBody>
-        </Card>
-      </div>
+      <>
+        <div className=" px-5">
+          <div className="flex">
+            <div className="rounded-full bg-slate-100 p-1 inline-flex gap-1">
+              <button
+                type="button"
+                onClick={() => setTab("overview")}
+                className={
+                  tab === "overview"
+                    ? "px-4 py-1 rounded-full bg-white text-slate-900 shadow-sm text-sm font-semibold"
+                    : "px-4 py-1 rounded-full text-slate-500 text-sm font-semibold"
+                }
+              >
+                Overview
+              </button>
 
-      {/* Tabs + content */}
-      <Card>
-        <CardHeader
-          title="Details"
-          subtitle="Overview content and evidence tracking"
-          right={<Badge tone="slate">Static data</Badge>}
-        />
-        <div className="border-b border-slate-200 px-5">
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setTab("overview")}
-              className={[
-                "relative -mb-px border-b-2 px-3 py-3 text-sm font-semibold",
-                tab === "overview"
-                  ? "border-slate-900 text-slate-900"
-                  : "border-transparent text-slate-500 hover:text-slate-700",
-              ].join(" ")}
-            >
-              Overview
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab("evidence")}
-              className={[
-                "relative -mb-px border-b-2 px-3 py-3 text-sm font-semibold",
-                tab === "evidence"
-                  ? "border-slate-900 text-slate-900"
-                  : "border-transparent text-slate-500 hover:text-slate-700",
-              ].join(" ")}
-            >
-              Evidence
-            </button>
+              <button
+                type="button"
+                onClick={() => setTab("evidence")}
+                className={
+                  tab === "evidence"
+                    ? "px-4 py-1 rounded-full bg-white text-slate-900 shadow-sm text-sm font-semibold"
+                    : "px-4 py-1 rounded-full text-slate-500 text-sm font-semibold"
+                }
+              >
+                Evidence
+              </button>
+            </div>
           </div>
         </div>
 
         <CardBody>
           {tab === "overview" ? (
-            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.4fr_1fr]">
-              <div className="space-y-5">
-                <section className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
-                  <div className="text-xs font-semibold text-slate-500">
-                    Objective
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[200px_1fr]">
+              <div className="space-y-3">
+                {overviewSections.map((s) => (
+                  <div key={s.id} className="px-2">
+                    <a href={`#${s.id}`} className="block rounded-lg border border-slate-200 bg-gray-50 px-4 py-3 text-sm text-slate-600 hover:shadow">{s.title}</a>
                   </div>
-                  <p className="mt-2 text-sm text-slate-700">{data.overview.objective}</p>
-                </section>
-
-                <section className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-                  <div className="text-xs font-semibold text-slate-500">
-                    Requirements
-                  </div>
-                  <ul className="mt-3 space-y-2 text-sm text-slate-700">
-                    {data.overview.requirements.map((r) => (
-                      <li key={r} className="flex gap-2">
-                        <span className="mt-1 size-1.5 shrink-0 rounded-full bg-slate-900" />
-                        <span>{r}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <section className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-                    <div className="text-xs font-semibold text-slate-500">
-                      Scope
-                    </div>
-                    <ul className="mt-3 space-y-2 text-sm text-slate-700">
-                      {data.overview.scope.map((s) => (
-                        <li key={s} className="flex gap-2">
-                          <span className="mt-1 size-1.5 shrink-0 rounded-full bg-emerald-600" />
-                          <span>{s}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                  <section className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-                    <div className="text-xs font-semibold text-slate-500">
-                      Exclusions
-                    </div>
-                    <ul className="mt-3 space-y-2 text-sm text-slate-700">
-                      {data.overview.exclusions.map((s) => (
-                        <li key={s} className="flex gap-2">
-                          <span className="mt-1 size-1.5 shrink-0 rounded-full bg-rose-600" />
-                          <span>{s}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                </div>
-
-                <section className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-                  <div className="text-xs font-semibold text-slate-500">
-                    References
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {data.overview.references.map((ref) => (
-                      <Badge key={ref} tone="slate">
-                        {ref}
-                      </Badge>
-                    ))}
-                  </div>
-                </section>
+                ))}
               </div>
 
-              <aside className="space-y-4">
-                <section className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm font-semibold text-slate-900">
-                      Leaders / owners
-                    </div>
-                    <Badge tone="blue">{data.leaders.length} leads</Badge>
-                  </div>
-                  <ul className="mt-4 space-y-3">
-                    {data.leaders.map((l) => (
-                      <li key={l.name} className="flex items-center gap-3">
-                        <div className="grid size-10 place-items-center rounded-2xl bg-slate-900 text-xs font-semibold text-white">
-                          {initials(l.name)}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="truncate text-sm font-semibold text-slate-900">
-                            {l.name}
-                          </div>
-                          <div className="truncate text-xs text-slate-500">
-                            {l.role} • {l.org}
-                          </div>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-
-                <section className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
-                  <div className="text-xs font-semibold text-slate-500">
-                    Quick links
-                  </div>
-                  <div className="mt-3 space-y-2 text-sm">
-                    <NavLink to="/dashboard" className="block text-slate-900 hover:underline">
-                      Back to dashboard
-                    </NavLink>
-                    <NavLink to="/tracking" className="block text-slate-900 hover:underline">
-                      Evidence tracking
-                    </NavLink>
-                  </div>
-                </section>
-              </aside>
+              <div className="space-y-4">
+                {overviewSections.map((s) => (
+                  <section id={s.id} key={s.id} className="rounded-2xl border border-slate-200 bg-gray-50 px-4 py-4">
+                    <div className="text-xs font-semibold text-slate-500">{s.title}</div>
+                    {s.content}
+                  </section>
+                ))}
+              </div>
             </div>
           ) : (
             <div className="space-y-4">
               <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                <div className="text-sm font-semibold text-slate-900">
-                  Evidence items
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <Badge tone="slate">Filter: All</Badge>
-                  <Badge tone="slate">Sort: Due date</Badge>
-                </div>
               </div>
 
               <div className="overflow-hidden rounded-2xl border border-slate-200">
@@ -328,10 +251,106 @@ export default function DetailsRoute() {
                   ))}
                 </ul>
               </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div className="md:col-span-2">
+                  <section className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+                    <div className="flex items-start justify-between">
+                      <div className="text-sm font-semibold text-slate-900">Comments</div>
+                    </div>
+
+                    <ul className="mt-4 space-y-4">
+                      <li className="flex gap-3">
+                        <div className="grid size-10 place-items-center rounded-full bg-slate-300 text-xs font-semibold text-white">SI</div>
+                        <div className="min-w-0">
+                          <div className="flex min-w-['100%'] items-center justify-between">
+                            <div className="truncate text-sm font-semibold text-slate-900">Sara Ibrahim</div>
+                            <div className="text-xs text-slate-400 ml-auto">2025-08-05</div>
+                          </div>
+                          <div className="mt-2 text-sm text-slate-700">Ensure The Plan Includes A Clear Governance Model.</div>
+                        </div>
+                      </li>
+
+                      <li className="flex gap-3">
+                        <div className="grid size-10 place-items-center rounded-full bg-slate-300 text-xs font-semibold text-white">MH</div>
+                        <div className="min-w-0">
+                          <div className="flex items-center justify-between">
+                            <div className="truncate text-sm font-semibold text-slate-900">Mona Hamed</div>
+                            <div className="text-xs text-slate-400">2025-08-05</div>
+                          </div>
+                          <div className="mt-2 text-sm text-slate-700">Ensure The Plan Includes A Clear Governance Model.</div>
+                        </div>
+                      </li>
+                    </ul>
+
+                    <div className="mt-4">
+                      <textarea rows={3} className="w-full resize-none rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-700" placeholder="Write a comment..." />
+                      <div className="mt-3 flex justify-start">
+                        <button className="rounded-md bg-slate-800 px-4 py-2 text-sm font-semibold text-white">Post Comment</button>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+
+                <div className="md:col-span-1">
+                  <section className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+                    <div className="text-sm font-semibold text-slate-900">Recent Activities</div>
+                    <ul className="mt-3 space-y-3 text-sm text-slate-700">
+                      <li className="flex items-start justify-between gap-2">
+                        <div className="flex items-start gap-2">
+                          <div className="mt-1 h-2 w-2 rounded-full bg-rose-500" />
+                          <div>
+                            <div className="font-semibold text-slate-900">Roadmap_Version1.Docx</div>
+                            <div className="text-xs text-slate-500">Uploaded By Rami AlSharif</div>
+                          </div>
+                        </div>
+                        <div className="text-xs text-slate-400">5 Mins Ago</div>
+                      </li>
+
+                      <li className="flex items-start justify-between gap-2">
+                        <div className="flex items-start gap-2">
+                          <div className="mt-1 h-2 w-2 rounded-full bg-rose-500" />
+                          <div>
+                            <div className="font-semibold text-slate-900">KPI_Framework.Xlsx</div>
+                            <div className="text-xs text-slate-500">Uploaded By Mona Hamed</div>
+                          </div>
+                        </div>
+                        <div className="text-xs text-slate-400">20 Mins Ago</div>
+                      </li>
+
+                      <li className="flex items-start justify-between gap-2">
+                        <div className="flex items-start gap-2">
+                          <div className="mt-1 h-2 w-2 rounded-full bg-rose-500" />
+                          <div>
+                            <div className="font-semibold text-slate-900">Digital_Transformation_Plan.Pdf</div>
+                            <div className="text-xs text-slate-500">Approved By Advisory Team</div>
+                          </div>
+                        </div>
+                        <div className="text-xs text-slate-400">1 Hour Ago</div>
+                      </li>
+                    </ul>
+                  </section>
+                </div>
+              </div>
             </div>
           )}
         </CardBody>
-      </Card>
+
+       {tab === "overview" &&  <section className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+                  <div className="text-sm font-semibold text-slate-900">Leaders</div>
+                  <ul className=" flex mt-4 space-y-3">
+                    {data.leaders.map((l) => (
+                      <li key={l.name} className="flex min-w-[220px] items-center gap-3">
+                        <div className="grid size-10 place-items-center rounded-2xl bg-slate-900 text-xs font-semibold text-white">{initials(l.name)}</div>
+                        <div className="min-w-0">
+                          <div className="truncate text-sm font-semibold text-slate-900">{l.name}</div>
+                          <div className="truncate text-xs text-slate-500">{l.role} • {l.org}</div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </section>}
+      </>
     </div>
   );
 }

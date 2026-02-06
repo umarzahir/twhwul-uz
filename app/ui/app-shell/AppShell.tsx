@@ -32,18 +32,7 @@ const navItems: NavItem[] = [
       </svg>
     ),
   },
-  {
-    to: "/tracking",
-    label: "Tasks",
-    icon: (
-      <svg viewBox="0 0 24 24" className="size-5" aria-hidden="true">
-        <path
-          fill="currentColor"
-          d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 16H5V5h14v14ZM7 12h10v2H7v-2Zm0-4h10v2H7V8Zm0 8h6v2H7v-2Z"
-        />
-      </svg>
-    ),
-  },
+
   {
     to: "/details?tab=evidence",
     label: "Documents",
@@ -56,41 +45,15 @@ const navItems: NavItem[] = [
       </svg>
     ),
   },
-  {
-    to: "/dashboard",
-    label: "Reports",
-    icon: (
-      <svg viewBox="0 0 24 24" className="size-5" aria-hidden="true">
-        <path
-          fill="currentColor"
-          d="M4 20V4h2v14h14v2H4Zm4-4V8h2v8H8Zm4 0V6h2v10h-2Zm4 0v-6h2v6h-2Z"
-        />
-      </svg>
-    ),
-  },
-  {
-    to: "/tracking",
-    label: "Users & Roles",
-    icon: (
-      <svg viewBox="0 0 24 24" className="size-5" aria-hidden="true">
-        <path
-          fill="currentColor"
-          d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z"
-        />
-      </svg>
-    ),
-  },
+ 
+
 ];
 
-function getPageTitle(pathname: string) {
-  if (pathname.startsWith("/dashboard")) return "Dashboard";
-  if (pathname.startsWith("/details")) return "Strategic Planning";
-  if (pathname.startsWith("/tracking")) return "Evidence Tracking";
-  return "Audit Platform";
-}
+
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [navCollapsed, setNavCollapsed] = React.useState(false);
   const location = useLocation();
   const [search, setSearch] = React.useState("");
 
@@ -98,12 +61,27 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     setMobileOpen(false);
   }, [location.pathname]);
 
+  const gridColsClass = navCollapsed ? "lg:grid-cols-[64px_1fr]" : "lg:grid-cols-[260px_1fr]";
+
   return (
     <div className="min-h-dvh bg-[var(--color-app-bg)] text-slate-900">
-      <div className="grid min-h-dvh grid-cols-1 lg:grid-cols-[260px_1fr]">
-        {/* Desktop sidebar (navy) */}
-        <aside className="hidden bg-[var(--color-brand-navy)] text-slate-100 lg:sticky lg:top-0 lg:block lg:h-dvh">
+      <div className={["grid min-h-dvh grid-cols-1", gridColsClass].join(" ")}>
+        <aside className="relative overflow-visible hidden bg-[var(--color-brand-navy)] text-slate-100 lg:sticky lg:top-0 lg:block lg:h-dvh">
           <div className="flex h-dvh flex-col px-4 py-5">
+            <button
+              type="button"
+              aria-label={navCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              onClick={() => setNavCollapsed((s) => !s)}
+              className="absolute -right-4 top-4 z-50 hidden h-10 w-10 items-center justify-center rounded-full bg-slate-600 text-slate-700 shadow-lg lg:inline-flex"
+            >
+              <svg viewBox="0 0 24 24" className="size-5" aria-hidden="true">
+                {navCollapsed ? (
+                  <path fill="white" d="M9 6l6 6-6 6V6z" />
+                ) : (
+                  <path fill="white" d="M15 6l-6 6 6 6V6z" />
+                )}
+              </svg>
+            </button>
             <div className="flex items-center gap-2 px-2">
               <div className="relative">
                 <span className="inline-block size-2.5 rotate-45 bg-rose-500" aria-hidden="true" />
@@ -116,32 +94,32 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 {navItems.map((item) => (
                   <li key={item.to}>
                     <NavLink to={item.to} className="block">
-                      {({ isActive }) => (
-                        <div
-                          className={[
-                            "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition",
-                            isActive
-                              ? "bg-[var(--color-brand-navy-2)] text-white"
-                              : "text-slate-200 hover:bg-white/5 hover:text-white",
-                          ].join(" ")}
-                        >
-                          <span className="text-slate-200">{item.icon}</span>
-                          <span className="font-medium">{item.label}</span>
-                        </div>
-                      )}
+                      {({ isActive }) => {
+                        const base = [
+                          "flex items-center gap-3 rounded-lg py-2.5 text-sm transition",
+                          isActive
+                            ? "bg-[var(--color-brand-navy-2)] text-white"
+                            : "text-slate-200 hover:bg-white/5 hover:text-white",
+                        ];
+                        if (navCollapsed) base.push("justify-center px-2");
+                        else base.push("px-3");
+
+                        return (
+                          <div className={base.join(" ")}>
+                            <span className="text-slate-200">{item.icon}</span>
+                            {!navCollapsed && <span className="font-medium">{item.label}</span>}
+                          </div>
+                        );
+                      }}
                     </NavLink>
                   </li>
                 ))}
               </ul>
             </nav>
 
-            <div className="px-2 text-xs text-slate-300/90">
-              Static UI demo • 2026
-            </div>
           </div>
         </aside>
 
-        {/* Mobile drawer */}
         {mobileOpen ? (
           <div className="fixed inset-0 z-40 lg:hidden" role="dialog" aria-modal="true">
             <button
@@ -208,7 +186,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         ) : null}
 
-        {/* Main column */}
         <div className="min-w-0">
           {/* Top bar (matches screenshot) */}
             <header className="sticky top-0 z-30 border-b border-[var(--color-border)] bg-white">
@@ -228,9 +205,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </svg>
               </button>
 
+              
+
               <div className="flex min-w-0 flex-1 items-center gap-3">
                 <div className="hidden text-sm font-semibold text-slate-600 lg:block">
-                  {/* {getPageTitle(location.pathname)} */}
                 </div>
                 <div className="relative w-full max-w-[320px]">
                   <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">

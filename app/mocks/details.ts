@@ -8,9 +8,9 @@ export type EvidenceItem = {
 };
 
 export const detailsData = {
-  title: "Strategic Planning",
-  category: "Digital Transformation",
-  progress: 62,
+  title: "Digital Transformation Strategic Planning",
+  category: "Strategy & Planning",
+  progress: 100,
   description:
     "Define objectives, scope, governance, and evidence required for strategic planning controls.",
   evidenceSummary: {
