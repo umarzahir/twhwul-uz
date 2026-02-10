@@ -4,6 +4,10 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(({ mode }) => ({
-  base: mode === "production" ? "/twhwul-uz/" : "/twhwul-uz/",
+  base: mode === "production" ? "/twhwul-uz/" : "/",
+  build: {
+    outDir: "docs",
+    assetsDir: "assets",
+  },
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
 }));

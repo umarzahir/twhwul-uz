@@ -1,0 +1,72 @@
+{
+  "_Card-C7zSwfLv.js": {
+    "file": "assets/Card-C7zSwfLv.js",
+    "name": "Card",
+    "imports": [
+      "_chunk-EPOLDU6W-CN5eVKFo.js"
+    ]
+  },
+  "_chunk-EPOLDU6W-CN5eVKFo.js": {
+    "file": "assets/chunk-EPOLDU6W-CN5eVKFo.js",
+    "name": "chunk-EPOLDU6W"
+  },
+  "app/root.tsx?__react-router-build-client-route": {
+    "file": "assets/root-vMGlw7je.js",
+    "name": "root",
+    "src": "app/root.tsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_chunk-EPOLDU6W-CN5eVKFo.js"
+    ],
+    "css": [
+      "assets/root-D_n8WGo3.css"
+    ]
+  },
+  "app/routes/app-shell.tsx?__react-router-build-client-route": {
+    "file": "assets/app-shell-BT9FmJ7H.js",
+    "name": "app-shell",
+    "src": "app/routes/app-shell.tsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_chunk-EPOLDU6W-CN5eVKFo.js"
+    ]
+  },
+  "app/routes/dashboard.tsx?__react-router-build-client-route": {
+    "file": "assets/dashboard-FeGQPYhp.js",
+    "name": "dashboard",
+    "src": "app/routes/dashboard.tsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_chunk-EPOLDU6W-CN5eVKFo.js",
+      "_Card-C7zSwfLv.js"
+    ]
+  },
+  "app/routes/details.tsx?__react-router-build-client-route": {
+    "file": "assets/details-BislS7SP.js",
+    "name": "details",
+    "src": "app/routes/details.tsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_chunk-EPOLDU6W-CN5eVKFo.js",
+      "_Card-C7zSwfLv.js"
+    ]
+  },
+  "app/routes/home.tsx?__react-router-build-client-route": {
+    "file": "assets/home-BUGOY429.js",
+    "name": "home",
+    "src": "app/routes/home.tsx?__react-router-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_chunk-EPOLDU6W-CN5eVKFo.js"
+    ]
+  },
+  "node_modules/@react-router/dev/dist/config/defaults/entry.client.tsx": {
+    "file": "assets/entry.client-BsujlHJO.js",
+    "name": "entry.client",
+    "src": "node_modules/@react-router/dev/dist/config/defaults/entry.client.tsx",
+    "isEntry": true,
+    "imports": [
+      "_chunk-EPOLDU6W-CN5eVKFo.js"
+    ]
+  }
+}
