@@ -1,1 +1,0 @@
-import{w as t}from"./chunk-EPOLDU6W-CHiQwsCZ.js";function o({}){return[{title:"Audit Dashboard"},{name:"description",content:"Audit readiness and compliance tracking"}]}const i=t(function(){return null});export{i as default,o as meta};
