@@ -3,7 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig({
-   base: "/twhwul-uz/",
+export default defineConfig(({ mode }) => ({
+  base: mode === "production" ? "/twhwul-uz/" : "/",
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
-});
+}));
